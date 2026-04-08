@@ -42,6 +42,7 @@ public class Model_Project extends Model{
             MiscUtil.initRowSet(poEntity);
             
             // Set default record status to ACTIVE
+            poEntity.updateString("cUsedxxxx", "0");
             poEntity.updateString("cRecdStat", RecordStatus.INACTIVE);
             poEntity.updateString("sModified", poGRider.getUserID());
 
@@ -115,6 +116,57 @@ public class Model_Project extends Model{
     public String getRecordStatus(){
         return (String) getValue("cRecdStat");
     }
+    
+    /**
+     * Sets the "used" status flag of the record.
+     *
+     * <p>
+     * This method updates the underlying field <code>cUsedxxxx</code> by
+     * converting the given boolean value into its corresponding string
+     * representation:
+     * <ul>
+     * <li><code>"1"</code> if <code>true</code></li>
+     * <li><code>"0"</code> if <code>false</code></li>
+     * </ul>
+     *
+     * <p>
+     * This is typically used to mark whether the record has already been
+     * utilized in a transaction or process.
+     *
+     * @param isUsed {@code true} to mark the record as used; {@code false}
+     * otherwise
+     * @return a {@link JSONObject} containing the result of the update
+     * operation,
+     */
+    public JSONObject isUsed(boolean isUsed) {
+        return setValue("cUsedxxxx", isUsed ? "1" : "0");
+    }
+    
+    /**
+     * Retrieves the "used" status flag of the record.
+     *
+     * <p>
+     * This method reads the value of the underlying field
+     * <code>cUsedxxxx</code> and evaluates it as a boolean:
+     * <ul>
+     * <li>Returns <code>true</code> if the value is equal to
+     * <code>"1"</code></li>
+     * <li>Returns <code>false</code> for any other value, including
+     * {@code null}</li>
+     * </ul>
+     *
+     * <p>
+     * The comparison is null-safe by converting the retrieved value to a string
+     * before evaluation.
+     *
+     * @return {@code true} if the record is marked as used; {@code false}
+     * otherwise
+     */
+    public boolean isUsed() {
+        Object value = getValue("cUsedxxxx");
+        return "1".equals(String.valueOf(value));
+    }
+
     
     /**
      * Sets the ID of the user who modified the record.
