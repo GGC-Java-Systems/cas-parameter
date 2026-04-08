@@ -216,14 +216,16 @@ public class Project extends Parameter {
         }
 
         if (lsStatus.equals(poModel.getRecordStatus())) {
-            poJSON.put("error", "Record was already Cancelled.");
+            poJSON.put("result", "error");
+            poJSON.put("message", "Record was already Cancelled.");
             return poJSON;
         }
-
-        poJSON = isEntryOkay();
-        if ("error".equals(poJSON.get("result"))) {
+        if (poModel.isUsed()) {
+            poJSON.put("result", "error");
+            poJSON.put("message", "Record was already used.\n Cancellation of project is not allowed.");
             return poJSON;
         }
+        
 
         if (!pbWthParent) {
             poJSON = seekApproval();
@@ -273,15 +275,16 @@ public class Project extends Parameter {
         }
         
         if (lsStatus.equals(poModel.getRecordStatus())) {
-            poJSON.put("error", "Record was already confirmed.");
+            poJSON.put("result", "error");
+            poJSON.put("message", "Record was already confirmed.");
             return poJSON;
         }
-
-        poJSON = isEntryOkay();
-        if ("error".equals(poJSON.get("result"))) {
+        if (poModel.isUsed()) {
+            poJSON.put("result", "error");
+            poJSON.put("message", "Record was already used.\n Cancellation of project is not allowed.");
             return poJSON;
         }
-
+        
         if (!pbWthParent) {
             poJSON = seekApproval();
             if ("error".equals(poJSON.get("result"))) {
@@ -330,12 +333,13 @@ public class Project extends Parameter {
         }
 
         if (lsStatus.equals(poModel.getRecordStatus())) {
-            poJSON.put("error", "Record was already voided.");
+             poJSON.put("result", "error");
+            poJSON.put("message", "Record was already voided.");
             return poJSON;
         }
-
-        poJSON = isEntryOkay();
-        if ("error".equals(poJSON.get("result"))) {
+        if (poModel.isUsed()) {
+            poJSON.put("result", "error");
+            poJSON.put("message", "Record was already used.\n Cancellation of project is not allowed.");
             return poJSON;
         }
 
@@ -348,7 +352,7 @@ public class Project extends Parameter {
 
         poJSON = statusChange(poModel.getTable(),
                 (String) poModel.getValue("sProjCode"),
-                remarks, lsStatus, !lbConfirm, true);
+                remarks, lsStatus, !lbConfirm, false);
 
         if ("error".equals(poJSON.get("result"))) {
             return poJSON;
@@ -387,54 +391,109 @@ public class Project extends Parameter {
                 return poJSON;
             }
         }
-
+        
+        
         poJSON.put("result", "success");
         return poJSON;
     }
 
     /**
-     * Checks if a Project record already exists in the database based on the
-     * provided project code and project description.
+     * Checks for duplicate records in the Project table.
+     *
      * <p>
-     * This method executes a SQL query to search the "Project" table for a
-     * record that matches both the given project code and project description.
-     * If a matching record is found, the method returns a JSON object
-     * containing an error message indicating that the project has already been
-     * encoded. If no matching record exists, the method returns a JSON object
-     * indicating success and that the project can be added.
-     * </p>
+     * This method performs a two-step duplicate check:
+     * <ol>
+     * <li><b>Step 1:</b> Checks if a project with the given
+     * <code>fsProjectCode</code> already exists.
+     * <ul>
+     * <li>If it exists, the method immediately returns an error JSON with the
+     * project code and description of the existing record.</li>
+     * </ul>
+     * </li>
+     * <li><b>Step 2:</b> If the project code does not exist, it checks for a
+     * full duplicate where <code>sProjCode</code>, <code>sProjDesc</code>, and
+     * <code>cRecdStat = '1'</code> match.
+     * <ul>
+     * <li>If a matching record is found, the method returns an error JSON
+     * indicating that the project has already been encoded.</li>
+     * <li>If no match is found, the method returns a success JSON indicating
+     * that the project can be safely added.</li>
+     * </ul>
+     * </li>
+     * </ol>
+     *
+     * <p>
+     * The JSON object returned contains the following keys:
+     * <ul>
+     * <li><code>result</code>: "success" if no duplicates were found, "error"
+     * otherwise</li>
+     * <li><code>message</code>: descriptive message about the duplicate
+     * status</li>
+     * </ul>
+     *
+     * <p>
+     * <b>Notes:</b>
+     * <ul>
+     * <li>All database queries are executed via
+     * <code>poGRider.executeQuery(String sql)</code>.</li>
+     * <li>ResultSet is properly closed after each query to avoid resource
+     * leaks.</li>
+     * <li>This method throws <code>SQLException</code> for database errors and
+     * <code>GuanzonException</code> for application-specific exceptions.</li>
+     * </ul>
+     *
+     * <p>
+     * Example usage:
+     * <pre>{@code
+     * JSONObject result = projectModel.CheckDuplicate("P001", "Project Alpha");
+     * if ("success".equals(result.get("result"))) {
+     *     // safe to add new project
+     * } else {
+     *     System.out.println(result.get("message"));
+     * }
+     * }</pre>
      *
      * @param fsProjectCode the project code to check for duplicates
      * @param fsProjectDesc the project description to check for duplicates
-     * @return a {@link JSONObject} containing:
-     * <ul>
-     * <li>{@code "result"} - "error" if a duplicate is found, "success" if no
-     * duplicate is found</li>
-     * <li>{@code "message"} - details about the duplicate or confirmation that
-     * no duplicate exists</li>
-     * </ul>
-     * @throws SQLException if a database access error occurs while executing
-     * the query
-     * @throws GuanzonException for application-specific exceptions or business
-     * logic errors
+     * @return a {@link JSONObject} containing the result ("success" or "error")
+     * and a descriptive message
+     * @throws SQLException if a database access error occurs
+     * @throws GuanzonException for any application-specific errors
      */
+    
     public JSONObject CheckDuplicate(String fsProjectCode, String fsProjectDesc) throws SQLException, GuanzonException {
         poJSON = new JSONObject();
 
-        String lsSQL = "SELECT sProjCode,"
-                + " sProjDesc,"
-                + " cRecdStat "
-                + " FROM Project"
-                + " WHERE sProjCode = " + SQLUtil.toSQL(fsProjectCode)
-                + " AND sProjDesc = " + SQLUtil.toSQL(fsProjectDesc)
-                + " AND cRecdStat = '1'";
-                 
+        String lsSQL = "SELECT sProjCode, sProjDesc, cRecdStat "
+                + "FROM Project "
+                + "WHERE sProjCode = " + SQLUtil.toSQL(fsProjectCode);
 
         System.out.println("EXECUTING SQL: " + lsSQL);
         ResultSet rs = poGRider.executeQuery(lsSQL);
+
         if (rs.next()) {
             poJSON.put("result", "error");
-            poJSON.put("message", "This project has already been encoded.\n "
+            poJSON.put("message", "Project Code already exists.\n"
+                    + "Project Code: " + rs.getString("sProjCode")
+                    + ",\nProject Description: " + rs.getString("sProjDesc"));
+            rs.close();
+            return poJSON;
+        }
+
+        rs.close();
+
+        lsSQL = "SELECT sProjCode, sProjDesc, cRecdStat "
+                + "FROM Project "
+                + "WHERE sProjCode = " + SQLUtil.toSQL(fsProjectCode)
+                + " AND sProjDesc = " + SQLUtil.toSQL(fsProjectDesc)
+                + " AND cRecdStat = '1'";
+
+        System.out.println("EXECUTING SQL: " + lsSQL);
+        rs = poGRider.executeQuery(lsSQL);
+
+        if (rs.next()) {
+            poJSON.put("result", "error");
+            poJSON.put("message", "This project has already been encoded.\n"
                     + "Project Code: " + rs.getString("sProjCode")
                     + ",\nProject Description: " + rs.getString("sProjDesc"));
         } else {
