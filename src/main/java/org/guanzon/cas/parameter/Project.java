@@ -135,10 +135,10 @@ public class Project extends Parameter {
         poModel.setModifiedDate(poGRider.getServerDate());
         
         
-        poJSON = CheckDuplicate(poModel.getProjectID(), poModel.getProjectDescription());
-        if ("error".equals(poJSON.get("result"))) {
-            return poJSON;
-        }
+//        poJSON = CheckDuplicate(poModel.getProjectID(), poModel.getProjectDescription());
+//        if ("error".equals(poJSON.get("result"))) {
+//            return poJSON;
+//        }
 
         poJSON.put("result", "success");
         return poJSON;
