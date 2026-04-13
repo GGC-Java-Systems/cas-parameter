@@ -204,7 +204,7 @@ public class Project extends Parameter {
     public JSONObject CancelRecord(String remarks)
             throws SQLException, GuanzonException, ParseException, CloneNotSupportedException {
 
-        String lsStatus = ProjectConstant.CANCEL;
+        String lsStatus = ProjectConstant.CANCELLED;
         poJSON = new JSONObject();
         boolean lbConfirm = true;
 
@@ -321,7 +321,7 @@ public class Project extends Parameter {
     public JSONObject VoidRecord(String remarks)
             throws SQLException, GuanzonException, ParseException, CloneNotSupportedException {
 
-        String lsStatus = ProjectConstant.VOID;
+        String lsStatus = ProjectConstant.VOIDED;
         poJSON = new JSONObject();
         boolean lbConfirm = true;
 
@@ -464,36 +464,20 @@ public class Project extends Parameter {
     public JSONObject CheckDuplicate(String fsProjectCode, String fsProjectDesc) throws SQLException, GuanzonException {
         poJSON = new JSONObject();
 
-        String lsSQL = "SELECT sProjCode, sProjDesc, cRecdStat "
-                + "FROM Project "
-                + "WHERE sProjCode = " + SQLUtil.toSQL(fsProjectCode);
+        String lsSQL = "SELECT sProjCode,"
+                + " sProjDesc,"
+                + " cRecdStat "
+                + " FROM Project"
+                + " WHERE sProjCode = " + SQLUtil.toSQL(fsProjectCode)
+                + " AND sProjDesc = " + SQLUtil.toSQL(fsProjectDesc);
+                 
 
         System.out.println("EXECUTING SQL: " + lsSQL);
         ResultSet rs = poGRider.executeQuery(lsSQL);
 
         if (rs.next()) {
             poJSON.put("result", "error");
-            poJSON.put("message", "Project Code already exists.\n"
-                    + "Project Code: " + rs.getString("sProjCode")
-                    + ",\nProject Description: " + rs.getString("sProjDesc"));
-            rs.close();
-            return poJSON;
-        }
-
-        rs.close();
-
-        lsSQL = "SELECT sProjCode, sProjDesc, cRecdStat "
-                + "FROM Project "
-                + "WHERE sProjCode = " + SQLUtil.toSQL(fsProjectCode)
-                + " AND sProjDesc = " + SQLUtil.toSQL(fsProjectDesc)
-                + " AND cRecdStat = '1'";
-
-        System.out.println("EXECUTING SQL: " + lsSQL);
-        rs = poGRider.executeQuery(lsSQL);
-
-        if (rs.next()) {
-            poJSON.put("result", "error");
-            poJSON.put("message", "This project has already been encoded.\n"
+            poJSON.put("message", "This project code has already been encoded.\n "
                     + "Project Code: " + rs.getString("sProjCode")
                     + ",\nProject Description: " + rs.getString("sProjDesc"));
         } else {
@@ -504,6 +488,50 @@ public class Project extends Parameter {
         rs.close();
         return poJSON;
     }
+    
+//    public JSONObject CheckDuplicate(String fsProjectCode, String fsProjectDesc) throws SQLException, GuanzonException {
+//        poJSON = new JSONObject();
+//
+//        String lsSQL = "SELECT sProjCode, sProjDesc, cRecdStat "
+//                + "FROM Project "
+//                + "WHERE sProjCode = " + SQLUtil.toSQL(fsProjectCode);
+//
+//        System.out.println("EXECUTING SQL: " + lsSQL);
+//        ResultSet rs = poGRider.executeQuery(lsSQL);
+//
+//        if (rs.next()) {
+//            poJSON.put("result", "error");
+//            poJSON.put("message", "Project Code already exists.\n"
+//                    + "Project Code: " + rs.getString("sProjCode")
+//                    + ",\nProject Description: " + rs.getString("sProjDesc"));
+//            rs.close();
+//            return poJSON;
+//        }
+//
+//        rs.close();
+//
+//        lsSQL = "SELECT sProjCode, sProjDesc, cRecdStat "
+//                + "FROM Project "
+//                + "WHERE sProjCode = " + SQLUtil.toSQL(fsProjectCode)
+//                + " AND sProjDesc = " + SQLUtil.toSQL(fsProjectDesc)
+//                + " AND cRecdStat = '1'";
+//
+//        System.out.println("EXECUTING SQL: " + lsSQL);
+//        rs = poGRider.executeQuery(lsSQL);
+//
+//        if (rs.next()) {
+//            poJSON.put("result", "error");
+//            poJSON.put("message", "This project has already been encoded.\n"
+//                    + "Project Code: " + rs.getString("sProjCode")
+//                    + ",\nProject Description: " + rs.getString("sProjDesc"));
+//        } else {
+//            poJSON.put("result", "success");
+//            poJSON.put("message", "No duplicate found. You can proceed.");
+//        }
+//
+//        rs.close();
+//        return poJSON;
+//    }
 
     /**
      * Constants representing Project record statuses.
@@ -523,12 +551,12 @@ public class Project extends Parameter {
         /**
          * Cancel status
          */
-        public static final String CANCEL = "3";
+        public static final String CANCELLED = "3";
 
         /**
          * Void status
          */
-        public static final String VOID = "4";
+        public static final String VOIDED = "4";
 
     }
     
@@ -548,11 +576,11 @@ public class Project extends Parameter {
                 case ProjectConstant.CONFIRM:
                     crs.updateString("cRefrStat", "CONFIRM");
                     break;
-                case ProjectConstant.CANCEL:
-                    crs.updateString("cRefrStat", "CANCEL");
+                case ProjectConstant.CANCELLED:
+                    crs.updateString("cRefrStat", "CANCELLED");
                     break;
-                case ProjectConstant.VOID:
-                    crs.updateString("cRefrStat", "VOID");
+                case ProjectConstant.VOIDED:
+                    crs.updateString("cRefrStat", "VOIDED");
                     break;
                 default:
                     char ch = crs.getString("cRefrStat").charAt(0);
@@ -565,11 +593,11 @@ public class Project extends Parameter {
                         case ProjectConstant.CONFIRM:
                             crs.updateString("cRefrStat", "CONFIRM");
                             break;
-                        case ProjectConstant.CANCEL:
-                            crs.updateString("cRefrStat", "CANCEL");
+                        case ProjectConstant.CANCELLED:
+                            crs.updateString("cRefrStat", "CANCELLED");
                             break;
-                        case ProjectConstant.VOID:
-                            crs.updateString("cRefrStat", "VOID");
+                        case ProjectConstant.VOIDED:
+                            crs.updateString("cRefrStat", "VOIDED");
                             break;
                         
                     }
