@@ -321,7 +321,7 @@ public class Project extends Parameter {
     public JSONObject VoidRecord(String remarks)
             throws SQLException, GuanzonException, ParseException, CloneNotSupportedException {
 
-        String lsStatus = ProjectConstant.VOID;
+        String lsStatus = ProjectConstant.VOIDED;
         poJSON = new JSONObject();
         boolean lbConfirm = true;
 
@@ -556,7 +556,7 @@ public class Project extends Parameter {
         /**
          * Void status
          */
-        public static final String VOID = "4";
+        public static final String VOIDED = "4";
 
     }
     
@@ -579,8 +579,8 @@ public class Project extends Parameter {
                 case ProjectConstant.CANCELLED:
                     crs.updateString("cRefrStat", "CANCELLED");
                     break;
-                case ProjectConstant.VOID:
-                    crs.updateString("cRefrStat", "VOID");
+                case ProjectConstant.VOIDED:
+                    crs.updateString("cRefrStat", "VOIDED");
                     break;
                 default:
                     char ch = crs.getString("cRefrStat").charAt(0);
@@ -596,8 +596,8 @@ public class Project extends Parameter {
                         case ProjectConstant.CANCELLED:
                             crs.updateString("cRefrStat", "CANCELLED");
                             break;
-                        case ProjectConstant.VOID:
-                            crs.updateString("cRefrStat", "VOID");
+                        case ProjectConstant.VOIDED:
+                            crs.updateString("cRefrStat", "VOIDED");
                             break;
                         
                     }
