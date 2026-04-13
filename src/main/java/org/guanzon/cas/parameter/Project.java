@@ -470,7 +470,6 @@ public class Project extends Parameter {
                 + " FROM Project"
                 + " WHERE sProjCode = " + SQLUtil.toSQL(fsProjectCode)
                 + " AND sProjDesc = " + SQLUtil.toSQL(fsProjectDesc);
-//                + " AND cRecdStat = '1'";
                  
 
         System.out.println("EXECUTING SQL: " + lsSQL);
@@ -478,7 +477,7 @@ public class Project extends Parameter {
 
         if (rs.next()) {
             poJSON.put("result", "error");
-            poJSON.put("message", "This project has already been encoded.\n "
+            poJSON.put("message", "This project code has already been encoded.\n "
                     + "Project Code: " + rs.getString("sProjCode")
                     + ",\nProject Description: " + rs.getString("sProjDesc"));
         } else {
