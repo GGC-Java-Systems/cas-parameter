@@ -85,6 +85,7 @@ public class Model_Branch_Cluster extends Model {
             poEntity.absolute(1);
 
             ID = poEntity.getMetaData().getColumnLabel(1);
+            ID2 = poEntity.getMetaData().getColumnLabel(3);
             paBranchClusterDelivery = new ArrayList<Model>();
             paBranchOthers = new ArrayList<Model>();
 
@@ -184,7 +185,7 @@ public class Model_Branch_Cluster extends Model {
 
         if (getClusterID() == null || getClusterID().isEmpty()) {
             poJSON.put("result", "error");
-            poJSON.put("message", "Cluster is not set.");
+//            poJSON.put("message", "Cluster is not set.");
             return poJSON;
         }
 
