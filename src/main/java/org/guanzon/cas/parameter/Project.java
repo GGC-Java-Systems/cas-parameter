@@ -205,6 +205,7 @@ public class Project extends Parameter {
             throws SQLException, GuanzonException, ParseException, CloneNotSupportedException {
 
         String lsStatus = ProjectConstant.CANCELLED;
+        String allowedDepartment = System.getProperty("allowed.department");
         poJSON = new JSONObject();
         boolean lbConfirm = true;
 
@@ -213,6 +214,12 @@ public class Project extends Parameter {
             poJSON = new JSONObject();
             poJSON.put("result", "error");
             poJSON.put("message", "No record loaded.");
+        }
+        if (!poGRider.getDepartment().equals(allowedDepartment)) {
+            poJSON.put("result", "error");
+            poJSON.put("message", "You do not have permission to cancel this record."
+                    + "\nOnly users from the Engineering Services department are allowed.");
+            return poJSON;
         }
 
         if (lsStatus.equals(poModel.getRecordStatus())) {
@@ -263,15 +270,22 @@ public class Project extends Parameter {
     public JSONObject ConfirmRecord(String remarks)
             throws SQLException, GuanzonException, ParseException, CloneNotSupportedException {
 
-        String lsStatus = ProjectConstant.CONFIRM;
+        String lsStatus = ProjectConstant.CONFIRMED;
         poJSON = new JSONObject();
         boolean lbConfirm = true;
-
+        String allowedDepartment = System.getProperty("allowed.department");
+        
         if (getModel().getEditMode() != EditMode.READY
                 || getModel().getEditMode() != EditMode.UPDATE) {
             poJSON = new JSONObject();
             poJSON.put("result", "error");
             poJSON.put("message", "No record loaded.");
+        }
+        if (!poGRider.getDepartment().equals(allowedDepartment)) {
+            poJSON.put("result", "error");
+            poJSON.put("message", "You do not have permission to confirm this record."
+                    + "\nOnly users from the Engineering Services department are allowed.");
+            return poJSON;
         }
         
         if (lsStatus.equals(poModel.getRecordStatus())) {
@@ -324,12 +338,19 @@ public class Project extends Parameter {
         String lsStatus = ProjectConstant.VOIDED;
         poJSON = new JSONObject();
         boolean lbConfirm = true;
-
+        String allowedDepartment = System.getProperty("allowed.department");
+         
         if (getModel().getEditMode() != EditMode.READY
                 || getModel().getEditMode() != EditMode.UPDATE) {
             poJSON = new JSONObject();
             poJSON.put("result", "error");
             poJSON.put("message", "No record loaded.");
+        }
+        if (!poGRider.getDepartment().equals(allowedDepartment)) {
+            poJSON.put("result", "error");
+            poJSON.put("message", "You do not have permission to void this record."
+                    + "\nOnly users from the Engineering Services department are allowed.");
+            return poJSON;
         }
 
         if (lsStatus.equals(poModel.getRecordStatus())) {
@@ -546,7 +567,7 @@ public class Project extends Parameter {
         /**
          * Confirmed status
          */
-        public static final String CONFIRM = "1";
+        public static final String CONFIRMED = "1";
 
         /**
          * Cancel status
@@ -573,8 +594,8 @@ public class Project extends Parameter {
                 case ProjectConstant.OPEN:
                     crs.updateString("cRefrStat", "OPEN");
                     break;
-                case ProjectConstant.CONFIRM:
-                    crs.updateString("cRefrStat", "CONFIRM");
+                case ProjectConstant.CONFIRMED:
+                    crs.updateString("cRefrStat", "CONFIRMED");
                     break;
                 case ProjectConstant.CANCELLED:
                     crs.updateString("cRefrStat", "CANCELLED");
@@ -590,8 +611,8 @@ public class Project extends Parameter {
                         case ProjectConstant.OPEN:
                             crs.updateString("cRefrStat", "OPEN");
                             break;
-                        case ProjectConstant.CONFIRM:
-                            crs.updateString("cRefrStat", "CONFIRM");
+                        case ProjectConstant.CONFIRMED:
+                            crs.updateString("cRefrStat", "CONFIRMED");
                             break;
                         case ProjectConstant.CANCELLED:
                             crs.updateString("cRefrStat", "CANCELLED");
