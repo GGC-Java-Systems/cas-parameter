@@ -119,13 +119,13 @@ public class Project extends Parameter {
             return poJSON;
         }
 
-        if (poModel.getProjectID().isEmpty()) {
+        if (poModel.getProjectID() == null || poModel.getProjectID().isEmpty()) {
             poJSON.put("result", "error");
             poJSON.put("message", "Project Code must not be empty.");
             return poJSON;
         }
 
-        if (poModel.getProjectDescription().isEmpty()) {
+        if (poModel.getProjectID() == null || poModel.getProjectDescription().isEmpty()) {
             poJSON.put("result", "error");
             poJSON.put("message", "Project Description must not be empty.");
             return poJSON;

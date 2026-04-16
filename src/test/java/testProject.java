@@ -42,8 +42,12 @@ public class testProject {
             if ("error".equals((String) loJSON.get("result"))) {
                 Assert.fail((String) loJSON.get("message"));
             }  
-
-            loJSON = record.getModel().setProjectDescription("the Canteen");
+ 
+            loJSON = record.getModel().setProjectID("");
+            if ("error".equals((String) loJSON.get("result"))) {
+                Assert.fail((String) loJSON.get("message"));
+            }
+            loJSON = record.getModel().setProjectDescription("");
             if ("error".equals((String) loJSON.get("result"))) {
                 Assert.fail((String) loJSON.get("message"));
             }  
