@@ -171,9 +171,9 @@ public class Project extends Parameter {
         poJSON = ShowDialogFX.Search(poGRider,
                 getSQ_Browse(),
                 value,
-                "Project ID»Project Description»Status",
-                "sProjCode»sProjDesc»cRecdStat",
-                "sProjCode»sProjDesc»cRecdStat",
+                "Project ID»Project Description»Status»is Used",
+                "sProjCode»sProjDesc»cRecdStat»cUsedxxxx",
+                "sProjCode»sProjDesc»cRecdStat»cUsedxxxx",
                 byCode ? 0 : 1);
 
         if (poJSON != null) {
@@ -695,5 +695,41 @@ public class Project extends Parameter {
           poJSON.put("message", e.getMessage());
         } 
         return lsEntry;
+    }
+    
+    @Override
+    public String getSQ_Browse(){
+        String lsCondition = "";
+
+        if (psRecdStat.length() > 1) {
+            for (int lnCtr = 0; lnCtr <= psRecdStat.length() - 1; lnCtr++) {
+                lsCondition += ", " + SQLUtil.toSQL(Character.toString(psRecdStat.charAt(lnCtr)));
+            }
+
+            lsCondition = "cRecdStat IN (" + lsCondition.substring(2) + ")";
+        } else {
+            lsCondition = "cRecdStat = " + SQLUtil.toSQL(psRecdStat);
+        }
+
+        
+        String lsSQL = "SELECT"
+                + " sProjCode"
+                + ", sProjDesc"
+                + ", CASE "
+                + "    WHEN cRecdStat = '0' THEN 'OPEN' "
+                + "    WHEN cRecdStat = '1' THEN 'CONFIRMED' "
+                + "    WHEN cRecdStat = '3' THEN 'CANCELLED' "
+                + "    WHEN cRecdStat = '4' THEN 'VOID' "
+                + "    ELSE 'UNKNOWN' END AS cRecdStat"
+                + ", CASE "
+                + "    WHEN cUsedxxxx = '0' THEN 'NO' "
+                + "    WHEN cUsedxxxx = '1' THEN 'YES' "
+                + "    ELSE 'UNKNOWN' END AS cUsedxxxx"
+                + ", sModified"
+                + ", dModified"
+                + " FROM Project" ;
+        
+        
+        return MiscUtil.addCondition(lsSQL, lsCondition);
     }
 }
