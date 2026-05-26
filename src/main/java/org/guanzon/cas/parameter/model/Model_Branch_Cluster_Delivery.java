@@ -32,6 +32,7 @@ public class Model_Branch_Cluster_Delivery extends Model {
             poEntity.updateInt("nDelivery", 0);
 
             ID = poEntity.getMetaData().getColumnLabel(1);
+            ID2 = poEntity.getMetaData().getColumnLabel(2);
 
             pnEditMode = EditMode.UNKNOWN;
         } catch (SQLException e) {

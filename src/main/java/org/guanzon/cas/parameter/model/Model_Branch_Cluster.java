@@ -236,8 +236,9 @@ public class Model_Branch_Cluster extends Model {
         }
 
         paBranchOthers.clear();
+        paBranchClusterDelivery.clear();
         String lsSQL = "SELECT"
-                + "  sClustrID"
+                + "  sClustrID, cTrckSize"
                 + " FROM Branch_Cluster_Delivery"
                 + " WHERE sClustrID = " + SQLUtil.toSQL(getClusterID())
                 + " ORDER BY sClustrID";
@@ -249,11 +250,11 @@ public class Model_Branch_Cluster extends Model {
             poJSON.put("message", "No Cluster Delivery registered on this Cluster.");
             return poJSON;
         }
-
+        
         while (loRS.next()) {
             Model_Branch_Cluster_Delivery loBranchClusterDelivery = new ParamModels(poGRider).BranchClusterDelivery();
 
-            poJSON = loBranchClusterDelivery.openRecord(loRS.getString("sClustrID"));
+            poJSON = loBranchClusterDelivery.openRecord(loRS.getString("sClustrID"),loRS.getString("cTrckSize"));
 
             if ("success".equals((String) poJSON.get("result"))) {
                 paBranchClusterDelivery.add((Model) loBranchClusterDelivery);
