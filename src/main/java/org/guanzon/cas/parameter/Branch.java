@@ -14,6 +14,7 @@ import org.json.simple.JSONObject;
 
 public class Branch extends Parameter{
     Model_Branch poModel;
+    private String psCompany = "";
     
     @Override
     public void initialize() throws SQLException, GuanzonException{
@@ -60,6 +61,10 @@ public class Branch extends Parameter{
         return poModel;
     }
     
+    public void setCompanyId(String fsValue){
+        psCompany = fsValue;
+    }
+    
     @Override
     public JSONObject searchRecord(String value, boolean byCode) throws SQLException, GuanzonException{
         String lsCondition = "";
@@ -72,6 +77,11 @@ public class Branch extends Parameter{
             lsCondition = "cRecdStat IN (" + lsCondition.substring(2) + ")";
         } else {
             lsCondition = "cRecdStat = " + SQLUtil.toSQL(psRecdStat);
+        }
+        
+        //Added filtering per company - Arsiela 05-29-2026
+        if(psCompany != null && !"".equals(psCompany)){ 
+            lsCondition = lsCondition + " AND  sCompnyID = " + SQLUtil.toSQL(psCompany);
         }
 
         String lsSQL = MiscUtil.addCondition(getSQ_Browse(), lsCondition);
