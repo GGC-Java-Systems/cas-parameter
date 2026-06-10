@@ -28,6 +28,7 @@ import org.guanzon.cas.parameter.Department;
 import org.guanzon.cas.parameter.Industry;
 import org.guanzon.cas.parameter.InvLocation;
 import org.guanzon.cas.parameter.InvType;
+import org.guanzon.cas.parameter.InventoryCountType;
 import org.guanzon.cas.parameter.Made;
 import org.guanzon.cas.parameter.Measure;
 import org.guanzon.cas.parameter.Model;
@@ -317,6 +318,25 @@ public class ParamControllers {
         poInvLocation.newRecord();
         return poInvLocation;
     }
+    public InventoryCountType InventoryCountType() throws SQLException, GuanzonException {
+        if (poGRider == null) {
+            poLogWrapper.severe("ParamControllers.InventoryCountType: Application driver is not set.");
+            return null;
+        }
+
+        if (poInvType != null) {
+            return poInventoryCountType;
+        }
+
+        poInventoryCountType = new InventoryCountType();
+        poInventoryCountType.setApplicationDriver(poGRider);
+        poInventoryCountType.setWithParentClass(false);
+        poInventoryCountType.setLogWrapper(poLogWrapper);
+        poInventoryCountType.initialize();
+        poInventoryCountType.newRecord();
+        return poInventoryCountType;
+    }
+
 
     public InvType InventoryType() throws SQLException, GuanzonException {
         if (poGRider == null) {
@@ -802,6 +822,7 @@ public class ParamControllers {
     private Country poCountry;
     private Industry poIndustry;
     private InvLocation poInvLocation;
+    private InventoryCountType poInventoryCountType;
     private InvType poInvType;
     private Measure poMeasure;
     private Model poModel;
