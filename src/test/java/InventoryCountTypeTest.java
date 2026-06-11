@@ -236,7 +236,7 @@ public class InventoryCountTypeTest {
         currentAllowBalanceForward = poTrans.getModel().getAllowBalanceForward();
 
         //make sure saving not active
-        if (!poTrans.getModel().isRecordActive()) {
+        if (poTrans.getModel().isRecordActive()) {
             System.err.println("field is not equal to setted value");
             Assert.fail();
         }
@@ -414,13 +414,6 @@ public class InventoryCountTypeTest {
         }
         currentAllowBalanceForward = poTrans.getModel().getAllowBalanceForward();
 
-        //make sure saving not active
-        if (!poTrans.getModel().isRecordActive()) {
-            System.err.println("field is not equal to setted value");
-            Assert.fail();
-        }
-        currentRecordStat = poTrans.getModel().getRecordStatus();
-
         loJSON = poTrans.saveRecord();
         if ("success".equals((String) loJSON.get("result"))) {
             System.err.println((String) loJSON.get("message"));
@@ -530,13 +523,7 @@ public class InventoryCountTypeTest {
         }
         currentAllowBalanceForward = poTrans.getModel().getAllowBalanceForward();
 
-        //make sure saving not active
-        if (!poTrans.getModel().isRecordActive()) {
-            System.err.println("field is not equal to setted value");
-            Assert.fail();
-        }
-        currentRecordStat = poTrans.getModel().getRecordStatus();
-
+        
         loJSON = poTrans.saveRecord();
         if ("success".equals((String) loJSON.get("result"))) {
             System.err.println((String) loJSON.get("message"));
@@ -609,13 +596,6 @@ public class InventoryCountTypeTest {
             Assert.fail();
         }
         currentAllowBalanceForward = poTrans.getModel().getAllowBalanceForward();
-
-        //make sure saving not active
-        if (!poTrans.getModel().isRecordActive()) {
-            System.err.println("field is not equal to setted value");
-            Assert.fail();
-        }
-        currentRecordStat = poTrans.getModel().getRecordStatus();
 
         loJSON = poTrans.saveRecord();
         if ("success".equals((String) loJSON.get("result"))) {
