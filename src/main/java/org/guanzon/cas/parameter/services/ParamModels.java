@@ -24,6 +24,7 @@ import org.guanzon.cas.parameter.model.Model_Department;
 import org.guanzon.cas.parameter.model.Model_Industry;
 import org.guanzon.cas.parameter.model.Model_Inv_Location;
 import org.guanzon.cas.parameter.model.Model_Inv_Type;
+import org.guanzon.cas.parameter.model.Model_Inventory_Count_Type;
 import org.guanzon.cas.parameter.model.Model_Labor;
 import org.guanzon.cas.parameter.model.Model_Labor_Category;
 import org.guanzon.cas.parameter.model.Model_Labor_Model;
@@ -269,6 +270,23 @@ public class ParamModels {
         }
 
         return poInvLocation;
+    }
+
+    public Model_Inventory_Count_Type InventoryCountType() {
+        if (poGRider == null) {
+            System.err.println("ParamModels.InventoryCountType: Application driver is not set.");
+            return null;
+        }
+
+        if (poInventoryCountType == null) {
+            poInventoryCountType = new Model_Inventory_Count_Type();
+            poInventoryCountType.setApplicationDriver(poGRider);
+            poInventoryCountType.setXML("Model_Inventory_Count_Type");
+            poInventoryCountType.setTableName("Inventory_Count_Type");
+            poInventoryCountType.initialize();
+        }
+
+        return poInventoryCountType;
     }
 
     public Model_Inv_Type InventoryType() {
@@ -719,7 +737,7 @@ public class ParamModels {
         }
         return this.poTransactionSource;
     }
-    
+
     public Model_xxxTransactionSourceTable TransactionSourceTable() {
         if (this.poGRider == null) {
             System.err.println("ParamModels.TransactionSourceTable: Application driver is not set.");
@@ -734,7 +752,7 @@ public class ParamModels {
         }
         return this.poTransactionSourceTable;
     }
-    
+
     public Model_Project Project() {
         if (this.poGRider == null) {
             System.err.println("ParamModels.Project: Application driver is not set.");
@@ -770,6 +788,7 @@ public class ParamModels {
     private Model_Department poDepartment;
     private Model_Industry poIndustry;
     private Model_Inv_Location poInvLocation;
+    private Model_Inventory_Count_Type poInventoryCountType;
     private Model_Inv_Type poInvType;
     private Model_Measure poMeasure;
     private Model_Model poModel;
