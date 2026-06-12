@@ -21,7 +21,6 @@ public class InventoryCountType extends Parameter {
 
     @Override
     public void initialize() throws SQLException, GuanzonException {
-        psRecdStat = Logical.YES;
 
         poModel = new ParamModels(poGRider).InventoryCountType();
 
@@ -99,7 +98,7 @@ public class InventoryCountType extends Parameter {
                 byCode ? 0 : 1);
 
         if (poJSON != null) {
-            return poModel.openRecord((String) poJSON.get("sBinIDxxx"));
+            return poModel.openRecord((String) poJSON.get("sInvCtrID"));
         } else {
             poJSON = new JSONObject();
             poJSON.put("result", "error");
@@ -138,7 +137,7 @@ public class InventoryCountType extends Parameter {
                 if ("error".equals((String) poJSON.get("result"))) {
                     return poJSON;
                 } else {
-                    if (Integer.parseInt(poJSON.get("nUserLevl").toString()) <= UserRight.ENCODER) {
+                    if (Integer.parseInt(poJSON.get("nUserLevl").toString()) < UserRight.AUDIT) {
                         poJSON.put("result", "error");
                         poJSON.put("message", "User is not an authorized approving officer.");
                         return poJSON;
@@ -163,7 +162,7 @@ public class InventoryCountType extends Parameter {
                 if ("error".equals((String) poJSON.get("result"))) {
                     return poJSON;
                 } else {
-                    if (Integer.parseInt(poJSON.get("nUserLevl").toString()) <= UserRight.ENCODER) {
+                    if (Integer.parseInt(poJSON.get("nUserLevl").toString()) < UserRight.AUDIT) {
                         poJSON.put("result", "error");
                         poJSON.put("message", "User is not an authorized approving officer.");
                         return poJSON;
@@ -177,5 +176,45 @@ public class InventoryCountType extends Parameter {
             }
         }
         return deactivateRecord();
+    }
+
+    public JSONObject UpdateRecord() throws SQLException, GuanzonException {
+        if (pbWithUI) {
+            //validate before allowing to be deactivated  
+            //UserRight.AUDIT is Audit Head or OIC
+            if (poGRider.getUserLevel() < UserRight.AUDIT) {
+                poJSON = ShowDialogFX.getUserApproval(poGRider);
+                if ("error".equals((String) poJSON.get("result"))) {
+                    return poJSON;
+                } else {
+                    if (Integer.parseInt(poJSON.get("nUserLevl").toString()) < UserRight.AUDIT) {
+                        poJSON.put("result", "error");
+                        poJSON.put("message", "User is not an authorized approving officer.");
+                        return poJSON;
+                    }
+//                psApprovalUser = poJSON.get("sUserIDxx") != null
+//                        ? poJSON.get("sUserIDxx").toString()
+//                        : poGRider.getUserID();
+                }
+            } else {
+//            psApprovalUser = poGRider.getUserID();
+            }
+        }
+
+        String lsSQL = "SELECT sInvCtrID"
+                + " FROM Inventory_Count_Master a"
+                + " WHERE a.sInvCtrID = " + SQLUtil.toSQL(getModel().getInventoryCountID()) + " LIMIT 1";
+
+        System.out.println("Retrieve query: " + lsSQL);
+        ResultSet loRSExist = poGRider.executeQuery(lsSQL);
+
+        if (MiscUtil.RecordCount(loRSExist) > 0L) {
+            poJSON.put("result", "error");
+            poJSON.put("message", "User is not allowed to update Inventory Type Count. Rule's is already used in Transaction");
+            return poJSON;
+        }
+        MiscUtil.close(loRSExist);
+
+        return updateRecord();
     }
 }
