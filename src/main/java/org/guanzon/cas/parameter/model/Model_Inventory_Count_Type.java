@@ -29,7 +29,7 @@ public class Model_Inventory_Count_Type extends Model {
             poEntity.updateNull("sDeptIDxx");
             poEntity.updateInt("nQuantity", 0);
             poEntity.updateString("cAllowBFw", RecordStatus.ACTIVE);
-            poEntity.updateString("cRecdStat", RecordStatus.ACTIVE);
+            poEntity.updateString("cRecdStat", RecordStatus.INACTIVE);
             //end - assign default values
 
             poDepartment = new ParamModels(poGRider).Department();
