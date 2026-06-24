@@ -15,23 +15,7 @@ MySQL - 5.7.44-log : Database - gcasys_dbf
 /*Table structure for table `inventory_count_type` */
 
 DROP TABLE IF EXISTS `inventory_count_type`;
-
-CREATE TABLE `inventory_count_type` (
-  `sInvCtrID` char(5) NOT NULL,
-  `sDescript` varchar(64) DEFAULT NULL,
-  `sDeptIDxx` varchar(3) DEFAULT NULL,
-  `sIndstCdx` varchar(4) DEFAULT NULL,
-  `cPeriodxx` char(1) DEFAULT NULL,
-  `sIncluded` varchar(10) DEFAULT NULL,
-  `nQuantity` mediumint(9) DEFAULT NULL,
-  `cAllowBFw` char(1) DEFAULT NULL,
-  `cRecdStat` char(1) DEFAULT NULL,
-  `sModified` varchar(12) DEFAULT NULL,
-  `dModified` datetime DEFAULT NULL,
-  `dTimeStmp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`sInvCtrID`),
-  KEY `ict_dept_ind_id` (`sDeptIDxx`,`sIndstCdx`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `inventory_count_type` (  `sInvCtrID` char(5) NOT NULL,  `sDescript` varchar(64) DEFAULT NULL,  `sDeptIDxx` varchar(3) DEFAULT NULL,  `sIndstCdx` varchar(4) DEFAULT NULL,  `cPeriodxx` char(1) DEFAULT NULL,  `sIncluded` varchar(10) DEFAULT NULL,  `nQuantity` mediumint(9) DEFAULT NULL,  `cAllowBFw` char(1) DEFAULT NULL,  `cRecdStat` char(1) DEFAULT NULL,  `sModified` varchar(12) DEFAULT NULL,  `dModified` datetime DEFAULT NULL,  `dTimeStmp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,  PRIMARY KEY (`sInvCtrID`),  KEY `ict_dept_ind_id` (`sDeptIDxx`,`sIndstCdx`)) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

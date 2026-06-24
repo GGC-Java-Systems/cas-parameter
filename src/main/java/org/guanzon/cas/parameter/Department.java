@@ -67,6 +67,7 @@ public class Department extends Parameter {
     public JSONObject searchRecord(String value, boolean byCode) throws SQLException, GuanzonException {
         String lsSQL = getSQ_Browse();
 
+        
         poJSON = ShowDialogFX.Search(poGRider,
                 lsSQL,
                 value,

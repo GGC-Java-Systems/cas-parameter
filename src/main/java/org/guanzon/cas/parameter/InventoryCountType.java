@@ -217,4 +217,42 @@ public class InventoryCountType extends Parameter {
 
         return updateRecord();
     }
+
+    public JSONObject isOfficerEmployee() throws SQLException {
+        poJSON = new JSONObject();
+        String userID = poGRider.getEmployeeNo();
+
+        //check by user level
+        if (poGRider.getUserLevel() >= UserRight.AUDIT) {
+            poJSON.put("result", "success");
+        }
+        if (userID == null || userID.trim().isEmpty()) {
+            poJSON.put("result", "error");
+            poJSON.put("message", "Invalid User ID. Please inform MIS Dept. for Account configuration.");
+            return poJSON;
+        }
+
+        String lsSQL = "SELECT"
+                + " a.sClientID"
+                + ", a.sCompnyNm"
+                + ", b.sBranchCd"
+                + ", b.cEmpRankx"
+                + ", c.cMainOffc"
+                + " FROM Client_Master a"
+                + "    LEFT JOIN Employee_Master001 b ON a.sClientID = b.sEmployID"
+                + "    LEFT JOIN Branch c ON b.sBranchCd = c.sBranchCd"
+                + "           WHERE (b.sDeptIDxx IN ('034','026','A008')"
+                + "             AND b.sEmployID = " + SQLUtil.toSQL(userID) + ")";
+
+        System.out.println("Employee eligibility: " + lsSQL);
+        ResultSet loRS = poGRider.executeQuery(lsSQL);
+        if (MiscUtil.RecordCount(loRS) <= 0) {
+            poJSON.put("result", "error");
+            poJSON.put("message", "User is not authorized to use this system.");
+            return poJSON;
+        }
+
+        poJSON.put("result", "success");
+        return poJSON;
+    }
 }
