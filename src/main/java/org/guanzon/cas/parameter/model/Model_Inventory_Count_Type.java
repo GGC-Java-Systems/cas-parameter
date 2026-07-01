@@ -147,7 +147,7 @@ public class Model_Inventory_Count_Type extends Model {
 
     @Override
     public String getNextCode() {
-        return MiscUtil.getNextCode(getTable(), ID, false, poGRider.getGConnection().getConnection(), poGRider.getBranchCode());
+        return String.valueOf(MiscUtil.getNextCode(getTable(), ID, false, poGRider.getGConnection().getConnection(), ""));
     }
 
     public Model_Department Department() throws SQLException, GuanzonException {
