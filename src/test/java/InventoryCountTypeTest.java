@@ -701,7 +701,7 @@ public class InventoryCountTypeTest {
 
         try {
             // Partial prefix search (byCode=true)
-            JSONObject json = poParam.searchRecord("GK", true);
+            JSONObject json = poParam.searchRecord("00001", true);
             System.out.println("Partial search: " + json.get("result") + " → " + json.get("message"));
         } catch (ExceptionInInitializerError e) {
             System.out.println("UI-dep ExceptionInInitializerError — skipped.");
